@@ -1,0 +1,323 @@
+local $/;
+require 't/runtests.pl';
+runtests( data => <DATA>, dialect => 'Markdown', wiki_uri => 'http://www.test.com/wiki/' );
+close DATA;
+
+__DATA__
+unordered list
+__H__
+<ul>
+<li>one</li>
+<li>two</li>
+<li>three</li>
+</ul>
+__W__
+* one
+* two
+* three
+__NEXT__
+ordered list
+__H__
+<ol>
+<li>one</li>
+<li>two</li>
+<li>three</li>
+</ol>
+__W__
+1. one
+2. two
+3. three
+__NEXT__
+blockquote
+__H__
+<blockquote>text</blockquote>
+__W__
+> text
+__NEXT__
+nested blockquote
+__H__
+<blockquote>text<blockquote>text2</blockquote></blockquote>
+__W__
+> text
+>
+> > text2
+__NEXT__
+nested blockquote cont'd
+__H__
+<blockquote>This is the first level of quoting.
+<blockquote>This is nested blockquote.</blockquote>
+<p>Back to the first level.</p></blockquote>
+__W__
+> This is the first level of quoting.
+>
+> > This is nested blockquote.
+>
+> Back to the first level.
+__NEXT__
+h1
+__H__
+<h1>text</h1>
+__W__
+# text
+__NEXT__
+bold
+__H__
+<b>bold text</b>
+__W__
+**bold text**
+__NEXT__
+italics
+__H__
+<i>text</i>
+__W__
+_text_
+__NEXT__
+strong
+__H__
+<strong>text</strong>
+__W__
+**text**
+__NEXT__
+em
+__H__
+<em>text</em>
+__W__
+_text_
+__NEXT__
+inline link ::link_style('inline')
+__H__
+<p>It's called <a href="http://en.wikipedia.org/wiki/Long-term_potentiation" title="Long-term potentiation">LTP</a>.</p>
+__W__
+It's called [LTP](http://en.wikipedia.org/wiki/Long-term_potentiation Long-term potentiation).
+__NEXT__
+reference link ::link_style('reference')
+__H__
+<p>It's called <a href="http://en.wikipedia.org/wiki/Long-term_potentiation" title="Long-term potentiation">LTP</a>.</p>
+__W__
+It's called [LTP][1].
+
+  [1]: http://en.wikipedia.org/wiki/Long-term_potentiation "Long-term potentiation"
+__NEXT__
+reference link no title ::link_style('inline')
+__H__
+<p><a href="http://example.net/">This link</a> has no title attribute.</p>
+__W__
+[This link](http://example.net/) has no title attribute.
+__NEXT__
+multi-paragraphs with reference links ::link_style('reference')
+__H__
+<p>This is a paragraph with a link to <a href="http://google.com">Google</a>.
+There's also a link to some other stuff, like <a href="http://digg.com">Digg</a>
+and <a href="http://wikipedia.org">Wikipedia</a>.
+
+<p>Here's another paragraph.</p>
+
+<p>This is fun stuff:</p>
+<ul>
+  <li><a href="http://video.google.com" title="Google Video">Google Video is the best!</a></li>
+  <li><a href="http://www.example.org" title="Examples">Example.org is a close second</a></li>
+</ul>
+__W__
+This is a paragraph with a link to [Google][1]. There's also a link to some other stuff, like [Digg][2] and [Wikipedia][3].
+
+Here's another paragraph.
+
+This is fun stuff:
+
+* [Google Video is the best!][4]
+* [Example.org is a close second][5]
+
+  [1]: http://google.com
+  [2]: http://digg.com
+  [3]: http://wikipedia.org
+  [4]: http://video.google.com "Google Video"
+  [5]: http://www.example.org "Examples"
+__NEXT__
+code
+__H__
+<code>printf()</code>
+__W__
+`printf()`
+__NEXT__
+inline image ::image_style('inline')
+__H__
+<img src="http://example.com/delete.png" alt="Delete" title="Click to delete" />
+__W__
+![Delete](http://example.com/delete.png "Click to delete")
+__NEXT__
+reference image ::image_style('reference')
+__H__
+<img src="http://example.com/delete.png" alt="Delete" title="Click to delete" />
+__W__
+![Delete][1]
+
+  [1]: http://example.com/delete.png "Click to delete"
+__NEXT__
+mixed inline images and links ::image_style('inline') ::link_style('inline')
+__H__
+<p>Link goes <a href="http://example.com" title="Link to example.com">Here</a>.
+Image goes below:</p>
+
+<p><img src="http://example.com/logo.png" alt="Logo"/></p>
+__W__
+Link goes [Here](http://example.com Link to example.com). Image goes below:
+
+![Logo](http://example.com/logo.png)
+__NEXT__
+mixed reference images and links ::image_style('reference') ::link_style('reference')
+__H__
+<p>This is a paragraph with a link to <a href="http://google.com">Google</a>.  There's also a link to some other stuff, like <a href="http://digg.com">Digg</a> and <a href="http://wikipedia.org">Wikipedia</a>. <img src="http://example.com/delete.png" alt="Delete" title="Click to delete" /></p>
+__W__
+This is a paragraph with a link to [Google][1]. There's also a link to some other stuff, like [Digg][2] and [Wikipedia][3]. ![Delete][4]
+
+  [1]: http://google.com
+  [2]: http://digg.com
+  [3]: http://wikipedia.org
+  [4]: http://example.com/delete.png "Click to delete"
+__NEXT__
+fallback to tag if image has dimensions ::image_tag_fallback(1)
+__H__
+<img src="http://example.com/origin.png" alt="Thingy" title="The title" width="100" />
+__W__
+<img src="http://example.com/origin.png" width="100" alt="Thingy" title="The title" />
+__NEXT__
+no fallback ::image_tag_fallback(0) ::image_style('inline')
+__H__
+<img src="http://example.com/origin.png" alt="Thingy" title="The title" width="100" />
+__W__
+![Thingy](http://example.com/origin.png "The title")
+__NEXT__
+automatic links
+__H__
+<a href="http://example.com">http://example.com</a>
+__W__
+<http://example.com>
+__NEXT__
+escapes
+__H__
+<p>a backslash \</p>
+<p>a weird combo ![</p>
+<p>a curly brace {</p>
+<p>1992. not a list item!</p>
+__W__
+a backslash \\
+
+a weird combo \![
+
+a curly brace \{
+
+1992\. not a list item!
+__NEXT__
+multi-headers
+__H__
+<h1>One</h1>
+<h2>Two</h2>
+<h3>Three</h3>
+__W__
+# One
+
+## Two
+
+### Three
+__NEXT__
+one-dot lists ::ordered_list_style('one-dot')
+__H__
+<ol>
+<li>one</li>
+<li>two</li>
+<li>three</li>
+</ol>
+__W__
+1. one
+1. two
+1. three
+__NEXT__
+plus lists ::unordered_list_style('plus')
+__H__
+<ul>
+<li>one</li>
+<li>two</li>
+<li>three</li>
+</ul>
+__W__
++ one
++ two
++ three
+__NEXT__
+dash lists ::unordered_list_style('dash')
+__H__
+<ul>
+<li>one</li>
+<li>two</li>
+<li>three</li>
+</ul>
+__W__
+- one
+- two
+- three
+__NEXT__
+forced inline anchors ::force_inline_anchor_links(1) ::unordered_list_style('asterisk')
+__H__
+<ul>
+  <li><a href="#overview">Overview</a>
+    <ul>
+      <li><a href="#philosophy">Philosophy</a></li>
+      <li><a href="#html">Inline HTML</a></li>
+    </ul>
+  </li>
+</ul>
+__W__
+* [Overview](#overview)
+  * [Philosophy](#philosophy)
+  * [Inline HTML](#html)
+__NEXT__
+table
+__H__
+<table>
+  <caption>My favorite animals</caption>
+  <tr>
+    <th>Animal</th>
+    <th>Region</th>
+    <th>Physical traits</th>
+    <th>Food</th>
+  </tr>
+  <tr>
+    <td>Pacman frog</td>
+    <td>Gran Chaco (Argentina)</td>
+    <td>Half mouth, half stomach (quite literally!)</td>
+    <td>Crickets, fish, etc.</td>
+  </tr>
+</table>
+__W__
+<table>
+<caption>My favorite animals</caption>
+<tr>
+<th>Animal</th>
+<th>Region</th>
+<th>Physical traits</th>
+<th>Food</th>
+</tr>
+<tr>
+<td>Pacman frog</td>
+<td>Gran Chaco (Argentina)</td>
+<td>Half mouth, half stomach (quite literally!)</td>
+<td>Crickets, fish, etc.</td>
+</tr>
+</table>
+__NEXT__
+setext header ::header_style('setext')
+__H__
+<h1>header1</h1>
+<p>Fun stuff here.</p>
+<h2>header2</h2>
+<p>More fun stuff!</p>
+__W__
+header1
+=======
+
+Fun stuff here.
+
+header2
+-------
+
+More fun stuff!
