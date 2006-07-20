@@ -4,8 +4,9 @@ use warnings;
 use strict;
 
 use base 'HTML::WikiConverter';
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
+use Params::Validate ':types';
 use HTML::Tagset;
 use URI;
 
@@ -86,13 +87,13 @@ information. Default is C<'sequential'>.
 =cut
 
 sub attributes { {
-  header_style              => { default => 'atx' },
-  link_style                => { default => 'reference' },
-  force_inline_anchor_links => { default => 0 },
-  image_style               => { default => 'reference' },
-  image_tag_fallback        => { default => 1 },
-  unordered_list_style      => { default => 'asterisk' },
-  ordered_list_style        => { default => 'sequential' },
+  header_style              => { default => 'atx', type => SCALAR },
+  link_style                => { default => 'reference', type => SCALAR },
+  force_inline_anchor_links => { default => 0, type => BOOLEAN },
+  image_style               => { default => 'reference', type => SCALAR },
+  image_tag_fallback        => { default => 1, type => BOOLEAN },
+  unordered_list_style      => { default => 'asterisk', type => SCALAR },
+  ordered_list_style        => { default => 'sequential', type => SCALAR },
 } }
 
 my @common_attrs = qw/ id class lang dir title style /;

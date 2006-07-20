@@ -1,5 +1,11 @@
 # Revision history for HTML::WikiConverter::Markdown
 
+date: Thu Jul 20 18:00:00 EST 2006
+version: 0.02
+changes:
+  - require 0.60
+  - add attribute types
+
 date: Wed Jun 07 10:00:00 EST 2006
 version: 0.01
 changes:
