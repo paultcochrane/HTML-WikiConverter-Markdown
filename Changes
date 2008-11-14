@@ -1,12 +1,20 @@
 # Revision history for HTML::WikiConverter::Markdown
 
-date: Thu Jul 20 18:00:00 EST 2006
+date: 2008-11-14
+version: 0.03
+changes:
+  - (bug #40914) require H::WC 0.63
+  - add perl license to Makefile.PL
+  - add more comprehensive test
+  - tighten pod-coverage.t loose ends
+
+date: 2006-07-20
 version: 0.02
 changes:
-  - require 0.60
+  - require H::WC 0.60
   - add attribute types
 
-date: Wed Jun 07 10:00:00 EST 2006
+date: 2006-07-07
 version: 0.01
 changes:
   - initial release (fulfill feature request: bug #18111)

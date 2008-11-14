@@ -1,3 +1,5 @@
+use HTML::WikiConverter;
+
 local $/;
 require 't/runtests.pl';
 runtests( data => <DATA>, dialect => 'Markdown', wiki_uri => 'http://www.test.com/wiki/' );
@@ -321,3 +323,42 @@ header2
 -------
 
 More fun stuff!
+__NEXT__
+more complete example ::header_style('atx')
+__H__
+<h2>Aaron Swartz's html2text</h2>
+
+<p>A handful of people have asked if there's a way to translate Markdown
+in reverse — to turn HTML back into Markdown-formatted plain text.
+The short answer is yes, by using Aaron Swartz's new version of
+<a href="http://www.aaronsw.com/2002/html2text/">html2text</a>:</p>
+
+<blockquote>
+  <p>html2text is a Python script that convers a page of HTML into clean,
+  easy-to-read plain ASCII. Better yet, that ASCII also happens to be
+  valid Markdown (a text-to-HTML format).</p>
+</blockquote>
+
+<p>html2text works so well that I'm planning to use it to convert most of
+my old Daring Fireball articles (the ones I wrote in raw HTML). It's
+worth noting that if you start with a Markdown document, translate it
+to HTML, then use html2text to go back to Markdown, it won't give you
+the exact same document you started with. That sort of complete
+round-trip fidelity simply is not possible, but html2text comes pretty
+close.</p>
+
+<p>Also, much like Markdown and SmartyPants, html2text works as a BBEdit
+text filter. Simply save a copy in the Unix Filters folder in your
+BBEdit Support folder.</p>
+__W__
+## Aaron Swartz's html2text
+
+A handful of people have asked if there's a way to translate Markdown in reverse — to turn HTML back into Markdown-formatted plain text. The short answer is yes, by using Aaron Swartz's new version of [html2text][1]:
+
+> html2text is a Python script that convers a page of HTML into clean, easy-to-read plain ASCII. Better yet, that ASCII also happens to be valid Markdown (a text-to-HTML format).
+
+html2text works so well that I'm planning to use it to convert most of my old Daring Fireball articles (the ones I wrote in raw HTML). It's worth noting that if you start with a Markdown document, translate it to HTML, then use html2text to go back to Markdown, it won't give you the exact same document you started with. That sort of complete round-trip fidelity simply is not possible, but html2text comes pretty close.
+
+Also, much like Markdown and SmartyPants, html2text works as a BBEdit text filter. Simply save a copy in the Unix Filters folder in your BBEdit Support folder.
+
+  [1]: http://www.aaronsw.com/2002/html2text/

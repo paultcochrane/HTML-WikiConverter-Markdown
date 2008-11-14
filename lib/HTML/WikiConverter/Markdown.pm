@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use base 'HTML::WikiConverter';
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Params::Validate ':types';
 use HTML::Tagset;
@@ -134,6 +134,7 @@ sub rules {
 sub _header_start {
   my( $self, $node, $rules ) = @_;
   return '' unless $self->header_style eq 'atx';
+
   ( my $level = $node->tag ) =~ s/\D//g;
   return unless $level;
 
