@@ -1,8 +1,8 @@
 HTML::WikiConverter::Markdown
 =============================
 
-This module adds HTML->Markdown conversion to the HTML::WikiConverter
-module.
+This module adds HTML-to-Markdown conversion to the
+HTML::WikiConverter module.
 
 SYNOPSIS
 
@@ -19,12 +19,6 @@ Or from the command line:
 There's also a web interface if you're so inclined:
 
   http://diberri.dyndns.org/wikipedia/html2wiki/
-
-DEPENDENCIES
-
-  * HTML::WikiConverter version 0.60
-  * HTML::Tagset
-  * URI
 
 INSTALLATION
 
@@ -57,7 +51,7 @@ You can also look for information at:
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2006 David J. Iberri
+Copyright (c) David J. Iberri
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

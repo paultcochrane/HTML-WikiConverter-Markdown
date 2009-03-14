@@ -4,9 +4,10 @@ use warnings;
 use strict;
 
 use base 'HTML::WikiConverter';
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Params::Validate ':types';
+use HTML::Entities;
 use HTML::Tagset;
 use URI;
 
@@ -114,7 +115,7 @@ sub rules {
     em => { alias => 'i' },
     b => { start => '**', end => '**' },
     strong => { alias => 'b' },
-    code => { start => '`', end => '`' },
+    code => { start => \&_code_delim, end => \&_code_delim },
 
     a => { replace => \&_link },
     img => { replace => \&_img },
@@ -258,30 +259,69 @@ sub preprocess_node {
   my( $self, $node ) = @_;
   return unless $node->tag and $node->parent and $node->parent->tag;
 
-  if( $node->parent->tag eq 'blockquote' and $self->_is_phrase_tag($node->tag) ) {
-    $self->_envelop_elem( $node, HTML::Element->new('p') );
+  if( $node->tag eq 'blockquote' ) {
+    my @non_phrasal_children = grep { ! $self->_is_phrase_tag($_->tag) } $node->content_list;
+    unless( @non_phrasal_children ) { # ie, we have things like <blockquote>blah blah blah</blockquote>, without a <p> or something
+      $self->_envelop_children( $node, HTML::Element->new('p') );
+    }
   } elsif( $node->tag eq '~text' ) {
     $self->_escape_text($node);
+
+    # fix (bug #43998)
+    $self->_decode_entities_in_code($node) if $node->parent and $node->parent->tag and $node->parent->tag eq 'code';
   }
 }
 
-sub _envelop_elem {
-  my( $self, $node, $new_parent ) = @_;
-  my $h = $node->replace_with($new_parent);
-  $new_parent->push_content($h);
+sub _envelop_children {
+  my( $self, $node, $new_child ) = @_;
+
+  my @children = $node->detach_content;
+  $node->push_content($new_child);
+  $new_child->push_content(@children);
 }
 
-my @escapes = qw( \\ \` * _ { } ); # '#', '.', '[', and '!' are handled specially
+# special handling for: ` _ # . [ !
+my @escapes = qw( \\ * { } );
 
 sub _escape_text {
   my( $self, $node ) = @_;
   my $text = $node->attr('text') || '';
+
   my $escapes = join '', @escapes;
   $text =~ s/([\Q$escapes\E])/\\$1/g;
+
+  # (bug #43998) Only backslash-escape backticks that don't occur
+  # within <code> tags. Those within <code> tags are left alone and
+  # the backticks to signal a <code> tag gets upgraded to a
+  # double-backtick by _code_delim().
+  # (bug #43993) Likewise, only backslash-escape underscores that
+  # occur outside <code> tags.
+  if( ! $node->look_up( _tag => 'code' ) ) {
+    $text =~ s/\`/\\`/g;
+    $text =~ s/\_/\\_/g;
+  }
+
   $text =~ s/^([\d]+)\./$1\\./;
   $text =~ s/^\#/\\#/;
   $text =~ s/\!\[/\\![/g;
   $text =~ s/\]\[/]\\[/g;
+  $node->attr( text => $text );
+}
+
+# fix (bug #43998)
+sub _code_delim {
+  my( $self, $node, $rules ) = @_;
+  my $contents = $self->get_elem_contents($node);
+  return $contents =~ /\`/ ? '``' : '`';
+}
+
+# fix (bug #43996)
+sub _decode_entities_in_code {
+  my( $self, $node ) = @_;
+  my $text = $node->attr('text') || '';
+  return unless $text;
+
+  HTML::Entities::_decode_entities( $text, { 'amp' => '&', 'lt' => '<', 'gt' => '>' } );
   $node->attr( text => $text );
 }
 

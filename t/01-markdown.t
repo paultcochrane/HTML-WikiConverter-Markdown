@@ -362,3 +362,74 @@ html2text works so well that I'm planning to use it to convert most of my old Da
 Also, much like Markdown and SmartyPants, html2text works as a BBEdit text filter. Simply save a copy in the Unix Filters folder in your BBEdit Support folder.
 
   [1]: http://www.aaronsw.com/2002/html2text/
+__NEXT__
+blockquotes containing only phrasal elements
+__H__
+<p>Via <a href="http://en.wikipedia.org/wiki/Long-term_potentiation">Wikipedia</a>:</p>
+<blockquote>Long-term potentiation is the long-lasting enhancement in communication between two <a href="http://en.wikipedia.org/wiki/Neuron">neurons</a> that lasts from minutes to hours.</blockquote>
+<p>Sweet.</p>
+__W__
+Via [Wikipedia][1]:
+
+> Long-term potentiation is the long-lasting enhancement in communication between two [neurons][2] that lasts from minutes to hours.
+
+Sweet.
+
+  [1]: http://en.wikipedia.org/wiki/Long-term_potentiation
+  [2]: http://en.wikipedia.org/wiki/Neuron
+__NEXT__
+blockquote containing p
+__H__
+<blockquote><p>shouldn't add a paragraph parent</p></blockquote>
+__W__
+> shouldn't add a paragraph parent
+__NEXT__
+__H__
+<blockquote>unmarked paragraph <p>another paragraph</p> <p>yet another</p></blockquote>
+__W__
+> unmarked paragraph
+>
+> another paragraph
+>
+> yet another
+__NEXT__
+code containing backticks (bug #43998)
+__H__
+<p><code>There is a literal backtick (`) here.</code></p>
+__W__
+``There is a literal backtick (`) here.``
+__NEXT__
+amp, lt, gt within code blocks (bug #43996)
+__H__
+<code>print("a &lt; b") if $c > $d</code>
+__W__
+`print("a < b") if $c > $d`
+__NEXT__
+amp, lt, gt within code blocks (bug #43996, example from markdown docs, http://bit.ly/NSrG3)
+__H__
+<p>I strongly recommend against using any
+<code>&lt;blink&gt;</code> tags.</p>
+
+<p>I wish SmartyPants used named entities like <code>&amp;mdash;</code> instead of decimal-encoded entites like <code>&amp;#8212;</code>.</p>
+__W__
+I strongly recommend against using any `<blink>` tags.
+
+I wish SmartyPants used named entities like `&mdash;` instead of decimal-encoded entites like `&#8212;`.
+__NEXT__
+escape literal backticks outside of <code> tags
+__H__
+<p>Hi there, this is a backtick (`).</p>
+__W__
+Hi there, this is a backtick (\`).
+__NEXT__
+don't backslash-escape underscores within <code> tags (bug #43993)
+__H__
+<code>foo _bar_ baz foo_bar</code>
+__W__
+`foo _bar_ baz foo_bar`
+__NEXT__
+but do backslash-escape other underscores
+__H__
+<p>foo _bar_</p>
+__W__
+foo \_bar\_

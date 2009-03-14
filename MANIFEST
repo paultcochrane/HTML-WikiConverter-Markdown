@@ -6,7 +6,7 @@ README
 lib/HTML/WikiConverter/Markdown.pm
 t/00-load.t
 t/boilerplate.t
-t/markdown.t
+t/01-markdown.t
 t/pod-coverage.t
 t/pod.t
 t/runtests.pl

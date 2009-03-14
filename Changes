@@ -1,5 +1,13 @@
 # Revision history for HTML::WikiConverter::Markdown
 
+date: 2009-03-13
+version: 0.04
+changes:
+  - correct handling of blockquotes containing only phrasal elements
+  - (bug #43988) properly escape backticks within code tags
+  - (bug #43993) don't escape underscores within code tags
+  - (bug #43996) decode specific html entities within code tags
+
 date: 2008-11-14
 version: 0.03
 changes:
