@@ -433,3 +433,27 @@ __H__
 <p>foo _bar_</p>
 __W__
 foo \_bar\_
+__NEXT__
+code blocks
+__H__
+<p>Here's an example:</p>
+
+<code><pre>if( chomp( my $foo = <> ) ) {
+  print "entered: $foo\n";
+}</pre></code>
+__W__
+Here's an example:
+
+    if( chomp( my $foo = <> ) ) {
+      print "entered: $foo\n";
+    }
+__NEXT__
+code blocks
+__H__
+<code><pre>if( chomp( my $foo = <> ) ) {
+  print "entered: $foo\n";
+}</pre></code>
+__W__
+    if( chomp( my $foo = <> ) ) {
+      print "entered: $foo\n";
+    }

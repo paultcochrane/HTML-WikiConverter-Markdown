@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use base 'HTML::WikiConverter';
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Params::Validate ':types';
 use HTML::Entities;
@@ -95,9 +95,15 @@ sub attributes { {
   image_tag_fallback        => { default => 1, type => BOOLEAN },
   unordered_list_style      => { default => 'asterisk', type => SCALAR },
   ordered_list_style        => { default => 'sequential', type => SCALAR },
+
+  # Requires H::WC version 0.67
+  p_strict                  => { default => 0 },
 } }
 
 my @common_attrs = qw/ id class lang dir title style /;
+
+# Hack to accommodate bug #43997 - multiline code blocks
+my $code_block_prefix = 'bqwegsdfbwegadfbnsdfbahwerfgkjnsdfbohqw34t927398y5jnwrteb8uq34inb';
 
 sub rules {
   my $self = shift;
@@ -116,6 +122,7 @@ sub rules {
     b => { start => '**', end => '**' },
     strong => { alias => 'b' },
     code => { start => \&_code_delim, end => \&_code_delim },
+    code_block => { line_prefix => $code_block_prefix, block => 1 },
 
     a => { replace => \&_link },
     img => { replace => \&_img },
@@ -267,9 +274,42 @@ sub preprocess_node {
   } elsif( $node->tag eq '~text' ) {
     $self->_escape_text($node);
 
-    # fix (bug #43998)
-    $self->_decode_entities_in_code($node) if $node->parent and $node->parent->tag and $node->parent->tag eq 'code';
+    # bug #43998
+    $self->_decode_entities_in_code($node)
+      if $node->parent->tag eq 'code' or $node->parent->tag eq 'code_block';
   }
+}
+
+sub preprocess_tree {
+  my( $self, $root ) = @_;
+  foreach my $node ( $root->descendants ) {
+    # bug #43997 - multiline code blocks
+    if( $self->_text_is_within_code_pre($node) ) {
+      $self->_convert_to_code_block($node);
+    }
+  }
+}
+
+sub _text_is_within_code_pre {
+  my( $self, $node ) = @_;
+  return unless $node->parent->parent and $node->parent->parent->tag;
+
+  # Must be <code><pre>...</pre></code> (or <pre><code>...</code></pre>)
+  my $code_pre = $node->parent->tag eq 'code' && $node->parent->parent->tag eq 'pre';
+  my $pre_code = $node->parent->tag eq 'pre'  && $node->parent->parent->tag eq 'code';
+  return unless $code_pre or $pre_code;
+
+  # Can't be any other nodes in a code block
+  return if $node->left or $node->right;
+  return if $node->parent->left or $node->parent->right;
+
+  return 1;
+}
+
+sub _convert_to_code_block {
+  my( $self, $node ) = @_;
+  $node->parent->parent->replace_with_content->delete;
+  $node->parent->tag( "code_block" );
 }
 
 sub _envelop_children {
@@ -281,41 +321,55 @@ sub _envelop_children {
 }
 
 # special handling for: ` _ # . [ !
-my @escapes = qw( \\ * { } );
+my @escapes = qw( \\ * { } _ ` );
+
+my %backslash_escapes = (
+  '\\' => [ '0923fjhtml2wikiescapedbackslash',  "\\\\" ],
+  '*'  => [ '0923fjhtml2wikiescapedasterisk',   "\\*"  ],
+  '{'  => [ '0923fjhtml2wikiescapedopenbrace',  "\\{"  ],
+  '}'  => [ '0923fjhtml2wikiescapedclosebrace', "\\}"  ],
+  '_'  => [ '0923fjhtml2wikiescapedunderscore', "\\_"  ],
+  '`'  => [ '0923fjhtml2wikiescapedbacktick',   "\\`"  ],
+);
 
 sub _escape_text {
   my( $self, $node ) = @_;
   my $text = $node->attr('text') || '';
 
-  my $escapes = join '', @escapes;
-  $text =~ s/([\Q$escapes\E])/\\$1/g;
+  #
+  # (bug #43998)
+  # Only backslash-escape backticks that don't occur within <code>
+  # tags. Those within <code> tags are left alone and the backticks to
+  # signal a <code> tag get upgraded to a double-backtick by
+  # _code_delim().
+  #
+  # (bug #43993)
+  # Likewise, only backslash-escape underscores that occur outside
+  # <code> tags.
+  #
 
-  # (bug #43998) Only backslash-escape backticks that don't occur
-  # within <code> tags. Those within <code> tags are left alone and
-  # the backticks to signal a <code> tag gets upgraded to a
-  # double-backtick by _code_delim().
-  # (bug #43993) Likewise, only backslash-escape underscores that
-  # occur outside <code> tags.
-  if( ! $node->look_up( _tag => 'code' ) ) {
-    $text =~ s/\`/\\`/g;
-    $text =~ s/\_/\\_/g;
+  my $inside_code = $node->look_up( _tag => 'code' ) || $node->look_up( _tag => 'code_block' );
+
+  if( not $inside_code ) {
+    my $escapes = join '', @escapes;
+    $text =~ s/([\Q$escapes\E])/$backslash_escapes{$1}->[0]/g;
+    $text =~ s/^([\d]+)\./$1\\./;
+    $text =~ s/^\#/\\#/;
+    $text =~ s/\!\[/\\![/g;
+    $text =~ s/\]\[/]\\[/g;
+
+    $node->attr( text => $text );
   }
-
-  $text =~ s/^([\d]+)\./$1\\./;
-  $text =~ s/^\#/\\#/;
-  $text =~ s/\!\[/\\![/g;
-  $text =~ s/\]\[/]\\[/g;
-  $node->attr( text => $text );
 }
 
-# fix (bug #43998)
+# bug #43998
 sub _code_delim {
   my( $self, $node, $rules ) = @_;
   my $contents = $self->get_elem_contents($node);
   return $contents =~ /\`/ ? '``' : '`';
 }
 
-# fix (bug #43996)
+# bug #43996
 sub _decode_entities_in_code {
   my( $self, $node ) = @_;
   my $text = $node->attr('text') || '';
@@ -327,7 +381,16 @@ sub _decode_entities_in_code {
 
 sub postprocess_output {
   my( $self, $outref ) = @_;
+  $$outref =~ s/\Q$code_block_prefix\E/    /gm;
+  $self->_unescape_text($outref);
   $self->_add_references($outref);
+}
+
+sub _unescape_text {
+  my( $self, $outref ) = @_;
+  foreach my $escape ( values %backslash_escapes ) {
+    $$outref =~ s/$escape->[0]/$escape->[1]/g;
+  }
 }
 
 sub _add_references {

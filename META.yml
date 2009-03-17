@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               HTML-WikiConverter-Markdown
-version:            0.04
+version:            0.05
 abstract:           Convert HTML to Markdown markup
 author:
     - David J. Iberri <diberri@cpan.org>
@@ -10,7 +10,7 @@ configure_requires:
     ExtUtils::MakeMaker:  0
 requires:
     HTML::Tagset:         0
-    HTML::WikiConverter:  0.63
+    HTML::WikiConverter:  0.67
     Params::Validate:     0
     Test::More:           0
     URI:                  0

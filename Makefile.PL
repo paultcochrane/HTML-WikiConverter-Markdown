@@ -11,7 +11,7 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
         'Test::More' => 0,
-        'HTML::WikiConverter' => 0.63,
+        'HTML::WikiConverter' => 0.67, # for p_strict attribute
         'HTML::Tagset' => 0,
         'Params::Validate' => 0,
         'URI' => 0,

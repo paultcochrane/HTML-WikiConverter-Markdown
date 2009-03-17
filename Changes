@@ -1,5 +1,11 @@
 # Revision history for HTML::WikiConverter::Markdown
 
+date: 2009-03-16
+version: 0.05
+changes:
+  - requires HTML::WikiConverter 0.67
+  - (bug #43997) properly handles multiline code blocks
+
 date: 2009-03-13
 version: 0.04
 changes:
