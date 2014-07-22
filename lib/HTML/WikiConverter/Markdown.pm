@@ -152,14 +152,20 @@ sub _header_start {
 
 sub _header_end {
   my( $self, $node, $rules ) = @_;
-  return '' unless $self->header_style eq 'setext';
+  my $anchor = '';
+
+  if($node->id()) {
+      $anchor = "\t{#" . $node->id() . "}";
+  }
+
+  return $anchor unless $self->header_style eq 'setext';
   ( my $level = $node->tag ) =~ s/\D//g;
-  return unless $level;
+  return $anchor unless $level;
 
   my $symbol = $level == 1 ? '=' : '-';
   my $len = length $self->get_elem_contents($node);
   my $bar = ($symbol) x $len;
-  return "\n$bar\n";
+  return "$anchor\n$bar\n";
 }
 
 sub _link {
