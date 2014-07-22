@@ -3,13 +3,14 @@ date: UNRELEASED
 version: 0.06
 changes:
   - (bug #97384) Quote inline link titles
+  - (bug #97385) Support heading IDs
+  - Support PRE and DIV
 
 date: 2009-03-16
 version: 0.05
 changes:
   - requires HTML::WikiConverter 0.67
-  - (bug #97384) properly handles multiline code blocks
-  - (bug #97385) Support heading IDs
+  - (bug #43997) properly handles multiline code blocks
 
 date: 2009-03-13
 version: 0.04

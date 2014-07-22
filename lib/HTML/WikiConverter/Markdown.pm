@@ -126,6 +126,8 @@ sub rules {
 
     a => { replace => \&_link },
     img => { replace => \&_img },
+    div => { block => 1, line_format => 'blocks' },
+    pre => { line_prefix => "\t", block => 1, line_format => 'blocks' },
   );
 
   for( 1..6 ) {
@@ -354,7 +356,7 @@ sub _escape_text {
   # <code> tags.
   #
 
-  my $inside_code = $node->look_up( _tag => 'code' ) || $node->look_up( _tag => 'code_block' );
+  my $inside_code = $node->look_up( _tag => 'code' ) || $node->look_up( _tag => 'code_block' ) || $node->look_up( _tag => 'pre' );
 
   if( not $inside_code ) {
     my $escapes = join '', @escapes;
