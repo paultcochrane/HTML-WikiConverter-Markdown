@@ -1,4 +1,8 @@
 # Revision history for HTML::WikiConverter::Markdown
+date: UNRELEASED
+version: 0.06
+changes:
+  - (bug #97384) Quote inline link titles
 
 date: 2009-03-16
 version: 0.05

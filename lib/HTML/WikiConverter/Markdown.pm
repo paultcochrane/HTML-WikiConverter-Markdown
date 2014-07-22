@@ -175,7 +175,7 @@ sub _link {
   if( $url eq $text ) {
     return sprintf "<%s>", $url;
   } elsif( $style eq 'inline' ) {
-    return sprintf "[%s](%s %s)", $text, $url, $title if $title;
+    return sprintf "[%s](%s \"%s\")", $text, $url, $title if $title;
     return sprintf "[%s](%s)", $text, $url;
   } elsif( $style eq 'reference' ) {
     my $id = $self->_next_link_id;
