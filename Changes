@@ -5,6 +5,7 @@ changes:
   - (bug #97384) Quote inline link titles
   - (bug #97385) Support heading IDs
   - (bug #97450) Support PRE and DIV
+  - (bug #56769) Add newline after <br />
 
 date: 2009-03-16
 version: 0.05

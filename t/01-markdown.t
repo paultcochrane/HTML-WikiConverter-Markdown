@@ -482,4 +482,11 @@ __H__
 <h1 id="linkhere">my heading</h1>
 __W__
 # my heading	{#linkhere}
+__NEXT__
+BR
+__H__
+need to add a new line between here<br /> and here
+__W__
+need to add a new line between here<br />
+ and here
 

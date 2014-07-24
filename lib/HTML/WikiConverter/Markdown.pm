@@ -112,7 +112,7 @@ sub rules {
 
     my %rules = (
         hr => { replace  => "\n\n----\n\n" },
-        br => { preserve => 1, empty => 1 },
+        br => { preserve => 1, empty => 1, end   => \&_br_end },
         p => {
             block       => 1,
             trim        => 'both',
@@ -162,6 +162,11 @@ sub rules {
     }
 
     return \%rules;
+}
+
+sub _br_end {
+    my ( $self, $node, $rules ) = @_;
+    return "\n";
 }
 
 sub _header_start {
