@@ -90,7 +90,7 @@ inline link ::link_style('inline')
 __H__
 <p>It's called <a href="http://en.wikipedia.org/wiki/Long-term_potentiation" title="Long-term potentiation">LTP</a>.</p>
 __W__
-It's called [LTP](http://en.wikipedia.org/wiki/Long-term_potentiation Long-term potentiation).
+It's called [LTP](http://en.wikipedia.org/wiki/Long-term_potentiation "Long-term potentiation").
 __NEXT__
 reference link ::link_style('reference')
 __H__
@@ -162,7 +162,7 @@ Image goes below:</p>
 
 <p><img src="http://example.com/logo.png" alt="Logo"/></p>
 __W__
-Link goes [Here](http://example.com Link to example.com). Image goes below:
+Link goes [Here](http://example.com "Link to example.com"). Image goes below:
 
 ![Logo](http://example.com/logo.png)
 __NEXT__
