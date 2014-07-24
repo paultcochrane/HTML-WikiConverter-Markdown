@@ -457,3 +457,4 @@ __W__
     if( chomp( my $foo = <> ) ) {
       print "entered: $foo\n";
     }
+

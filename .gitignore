@@ -1,0 +1,10 @@
+MANIFEST.bak
+META.yml
+MYMETA.json
+MYMETA.yml
+Makefile
+blib/
+inc/
+pm_to_blib
+*.swp
+HTML-WikiConverter-Markdown-*.tar.gz
