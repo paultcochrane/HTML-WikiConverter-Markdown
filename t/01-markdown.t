@@ -457,4 +457,29 @@ __W__
     if( chomp( my $foo = <> ) ) {
       print "entered: $foo\n";
     }
+__NEXT__
+DIV
+__H__
+<div>outer div<div>nested div</div></div>
+__W__
+outer div
+
+nested div
+__NEXT__
+PRE
+__H__
+<pre>this is
+	a 
+pre
+</pre>
+__W__
+	this is
+		a
+	pre
+__NEXT__
+Heading with ID
+__H__
+<h1 id="linkhere">my heading</h1>
+__W__
+# my heading	{#linkhere}
 
