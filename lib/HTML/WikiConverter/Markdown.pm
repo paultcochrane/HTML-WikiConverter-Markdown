@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use base 'HTML::WikiConverter';
-our $VERSION = '0.05';
+our $VERSION = '0.06_1';
 
 use Params::Validate ':types';
 use HTML::Entities;
@@ -85,6 +85,22 @@ etc.). One-dot style gives each list element the same ordinal number
 L<http://daringfireball.net/projects/markdown/syntax#list> for more
 information. Default is C<'sequential'>.
 
+=head2 md_extra
+
+Possible values: C<0>, C<1>. Support MarkDown Extra
+L<https://github.com/jmcmanus/pagedown-extra> extensions. Default is C<0>.
+
+This support is incomplete.
+
+    # Tables				Supported
+    # Fenced Code Blocks
+    # Definition Lists		Supported
+    # Footnotes
+    # Special Attributes
+    # SmartyPants
+    # Newlines
+    # Strikethrough
+
 =cut
 
 sub attributes {
@@ -99,6 +115,7 @@ sub attributes {
 
         # Requires H::WC version 0.67
         p_strict => { default => 0 },
+        md_extra => { default => 0, type => BOOLEAN },
     };
 }
 
@@ -112,7 +129,7 @@ sub rules {
 
     my %rules = (
         hr => { replace  => "\n\n----\n\n" },
-        br => { preserve => 1, empty => 1, end   => \&_br_end },
+        br => { preserve => 1, empty => 1, end => \&_br_end },
         p => {
             block       => 1,
             trim        => 'both',
@@ -159,6 +176,29 @@ sub rules {
             end         => "\n",
             line_format => 'multi'
         };
+    }
+
+    # MarkDown Extra https://github.com/jmcmanus/pagedown-extra
+    # Tables				Supported
+    # Fenced Code Blocks
+    # Definition Lists		Supported
+    # Footnotes
+    # Special Attributes
+    # SmartyPants
+    # Newlines
+    # Strikethrough
+    if ( $self->md_extra ) {
+        $rules{dt} = { start => "\n",    end => "\n", trim => 'both', };
+        $rules{dd} = { start => ":    ", end => "\n", trim => 'both', };
+        delete( $rules{table} );
+        delete( $rules{caption} );
+        $rules{tr}    = { start => "\n",    end  => "|", trim => 'both' };
+        $rules{td}    = { start => "|",     trim => 'both' };
+        $rules{th}    = { alias => 'td' };
+        $rules{thead} = { end   => "\n|-|", trim => 'both' };
+        # need an extra line here as some lists can contain complex block structures.
+        $rules{ul} = { block => 1, line_format => 'blocks' };
+        $rules{li} = { start => \&_li_start, blocks => 1, trim => 'leading' };
     }
 
     return \%rules;
@@ -530,3 +570,4 @@ under the same terms as Perl itself.
 =cut
 
 1;
+
