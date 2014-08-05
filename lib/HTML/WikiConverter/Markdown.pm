@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use base 'HTML::WikiConverter';
-our $VERSION = '0.06_1';
+our $VERSION = '0.06';
 
 use Params::Validate ':types';
 use HTML::Entities;
